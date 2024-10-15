@@ -1,5 +1,7 @@
+import 'package:evaluacion/widgets/add_habit.dart';
 import 'package:evaluacion/widgets/habits.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class Homepage extends StatelessWidget {
     const Homepage({super.key});
@@ -93,7 +95,39 @@ class Homepage extends StatelessWidget {
           
         ],
       ),
-      
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        backgroundColor: Colors.black,
+        children: [         
+          SpeedDialChild(
+            child: const Icon(Icons.place, color: Colors.white),
+            label: 'Añadir Habito',
+            backgroundColor: Colors.yellow,
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled:
+                    true, // Permite que el modal ocupe más espacio
+                backgroundColor: Colors.white,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (BuildContext context) {
+                  return const AddHabit();
+                },
+              );
+            },
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.favorite_border, color: Colors.white),
+            label: 'Eliminar de Favoritos',
+            backgroundColor: Colors.red,
+            onTap: () {
+              print('Eliminar de Favoritos');
+            },
+          ),
+        ],
+      ),
     );
   }
 }
