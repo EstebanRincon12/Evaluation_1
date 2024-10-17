@@ -1,6 +1,6 @@
 class Habitos{
   final String name;
-  final int days;
+  int days;
 
   Habitos({
 required this.days,
