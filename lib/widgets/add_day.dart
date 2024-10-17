@@ -27,7 +27,7 @@ class AddDay extends StatelessWidget {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  onYesPressed(); // Llama la función para incrementar los días
+                  onYesPressed(); 
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
@@ -37,7 +37,7 @@ class AddDay extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  onNoPressed(); // Llama la función para reiniciar los días a 0
+                  onNoPressed(); 
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,

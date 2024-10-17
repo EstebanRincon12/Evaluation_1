@@ -13,7 +13,7 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   final List<Habitos> listHabits = [
-    Habitos(days: 0, name: 'Hábito 1'),
+    Habitos(days: 20, name: 'Hábito 1'),
     Habitos(days: 0, name: 'Hábito 2'),
     Habitos(days: 0, name: 'Hábito 3'),
     Habitos(days: 0, name: 'Hábito 4'),
@@ -22,12 +22,45 @@ class _HomepageState extends State<Homepage> {
 
   void updateDays(int index) {
     setState(() {
-      listHabits[index].days += 1; // Incrementar los días en 1
+      listHabits[index].days += 1; 
+      if (listHabits[index].days == 21) {
+        _showCompletionDialog(index); 
+      }
     });
   }
+
   void resetDays(int index) {
     setState(() {
-      listHabits[index].days = 0; // Reiniciar los días a 0
+      listHabits[index].days = 0; 
+    });
+  }
+
+  void _showCompletionDialog(int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('¡Felicidades!'),
+          content: const Text('Cumpliste la meta de 21 días.'),
+          actions: [
+            TextButton(
+              child: const Text('Aceptar'),
+              onPressed: () {
+                setState(() {
+                  listHabits.removeAt(index); 
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+   void _addHabit(String habitName) {
+    setState(() {
+      listHabits.add(Habitos(days: 0, name: habitName)); 
     });
   }
 
@@ -50,7 +83,7 @@ class _HomepageState extends State<Homepage> {
             child: const Column(
               children: [
                 Text(
-                  'Habitos:',
+                  'Hábitos:',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 18,
@@ -58,7 +91,7 @@ class _HomepageState extends State<Homepage> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Lista de Habitos',
+                  'Lista de Hábitos',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 24,
@@ -69,72 +102,90 @@ class _HomepageState extends State<Homepage> {
             ),
           ),
           Expanded(
-  child: ListView.builder(
-    itemCount: listHabits.length,
-    itemBuilder: (context, index) {
-      return GestureDetector(
-        onTap: () {
-          // Pasar las acciones para los botones "Sí" y "No"
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.white,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            builder: (BuildContext context) {
-              return AddDay(
-                onYesPressed: () {
-                  updateDays(index); // Incrementa los días
-                  Navigator.pop(context); // Cierra el modal
-                },
-                onNoPressed: () {
-                  resetDays(index); // Reinicia los días a 0
-                  Navigator.pop(context); // Cierra el modal
-                },
-              );
-            },
-          );
-        },
-        child: Card(
-          margin: const EdgeInsets.all(8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          color: Colors.yellow,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            child: ListView.builder(
+              itemCount: listHabits.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.white,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(20)),
+                      ),
+                      builder: (BuildContext context) {
+                        return AddDay(
+                          onYesPressed: () {
+                            Navigator.pop(context); 
+                            updateDays(index); 
+                          },
+                          onNoPressed: () {
+                            resetDays(index);
+                            Navigator.pop(context); 
+                          },
+                        );
+                      },
+                    );
+                  },
+              child: Stack(
                     children: [
-                      Text(
-                        listHabits[index].name,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      Card(
+                        margin: const EdgeInsets.all(8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        color: Colors.yellow,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      listHabits[index].name,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Meta de días: ${listHabits[index].days}',
-                        style: const TextStyle(fontSize: 14),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            'Meta de días: ${listHabits[index].days}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                );
+              },
             ),
           ),
-        ),
-      );
-    },
-  ),
-)
-
         ],
       ),
       floatingActionButton: SpeedDial(
@@ -143,30 +194,29 @@ class _HomepageState extends State<Homepage> {
         children: [
           SpeedDialChild(
             child: const Icon(Icons.place, color: Colors.white),
-            label: 'Añadir Habito',
+            label: 'Añadir Hábito',
             backgroundColor: Colors.yellow,
             onTap: () {
-              //Aca
               showModalBottomSheet(
                 context: context,
                 isScrollControlled:
-                    true, // Permite que el modal ocupe más espacio
+                    true, 
                 backgroundColor: Colors.white,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
                 builder: (BuildContext context) {
-                  return const Add();
+                  return Add(onAddHabit: _addHabit);
                 },
               );
             },
           ),
           SpeedDialChild(
             child: const Icon(Icons.favorite_border, color: Colors.white),
-            label: 'Eliminar de Habito',
+            label: 'Eliminar Hábito',
             backgroundColor: Colors.red,
             onTap: () {
-              print('Eliminar de Favoritos');
+              print('Eliminar Hábito');
             },
           ),
         ],
@@ -174,4 +224,3 @@ class _HomepageState extends State<Homepage> {
     );
   }
 }
-
